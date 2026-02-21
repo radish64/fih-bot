@@ -32,6 +32,7 @@ with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=
 
 def catch_fish(user, modifier):
     diceRoll = random.randint(0,1000)
+    diceRoll = min(diceRoll+modifier, 1000)
     minFishies = 0
     maxFishies = 0
     if (diceRoll <= 50):
@@ -62,9 +63,7 @@ def catch_fish(user, modifier):
         caughtFishy = ultra[random.randint(0,len(ultra)-1)]
         minFishies = 1000 
         maxFishies = 1000
-    minFishies += modifier
-    maxFishies += modifier
-    caughtFishies = min(random.randint(minFishies,maxFishies), 1000)
+    caughtFishies = random.randint(minFishies,maxFishies)
     #print("Caught " + str(caughtFishies) + " fishies")
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
@@ -122,3 +121,10 @@ def destroy_fish(uid,amount):
             newFishies = currentFishies - amount
             cur.execute('update fishy set fishies = %s where id like %s',(newFishies,str(uid)))
             conn.commit()
+
+def getAllUsers():
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select id from fishy;')
+            return cur.fetchall()[0]
+

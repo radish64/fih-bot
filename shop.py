@@ -102,3 +102,8 @@ def delete_item(itemid):
             cur.execute('delete from inventory where unique_id = %s',(itemid,))
             conn.commit()
 
+def hasGoldenRod(user):
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select * from inventory where user_id like %s and item_id=5',(str(user.id),))
+            return (cur.fetchone())

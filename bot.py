@@ -27,13 +27,15 @@ async def go_fish(interaction, modifier):
     user = interaction.user
     lastfishedtime = fishy.check_timestamp(user)
     if(int(datetime.now().timestamp() - lastfishedtime > 3600)):
+        if shop.hasGoldenRod(user):
+            modifier += 100
         fih = fishy.catch_fish(user,modifier)
         caughtfishy = fih[0]
         caughtfishies = fih[1] 
         if caughtfishies == 100:
             caughtfishies = "💯";
-        await interaction.response.send_message(f"caught a{str(caughtfishy)} worth {str(caughtfishies)} fih!")
-        print(f"caught {str(caughtfishies)} for {user}")
+        await interaction.response.send_message(f"Caught a{str(caughtfishy)} worth {str(caughtfishies)} fih!")
+        print(f"Caught {str(caughtfishies)} for {user}")
         return 1
     else:
         waittime = 3600 - (int(datetime.now().timestamp()) - lastfishedtime)
@@ -77,27 +79,48 @@ async def buy_command(interaction, item: str):
     await interaction.response.send_message(message)
 
 @tree.command(name = 'use', description = 'buy an item with fih points!')
-async def use_command(interaction, item: str, target: str):
+async def use_command(interaction, item: str, target: str=None):
     user = interaction.user
     result=shop.use_item(user,item)
     print(result)
     message=""
-    if (result[1] == -1):
+    if (result == -1):
         message="Are you stupid? That's not an item"
-    if (result[1] == -2):
+    elif (result == -2):
         message="Are you stupid? You don't have that item"
-    if (result[1] == 1):
+    elif (result[1] == 1):
         fished = await go_fish(interaction,50)
         if (fished):
-            shop.delete_item(result[1])
-    if (result[1] == 2):
+            shop.delete_item(result[0])
+        return 0
+    elif (result[1] == 2):
         fished = await go_fish(interaction,100)
         if (fished):
-            shop.delete_item(result[1])
-    if (result[1] == 3):
+            shop.delete_item(result[0])
+        return 0
+    elif (result[1] == 3):
+        if (not target):
+            message = "Ping a user to attack!"
+        else:
             fishy.destroy_fish((re.split('<|@|>',target)[2]),100)
-            message=target
-            shop.delete_item(result[1])
+            message=f"Barnacles destroyed 100 of {target}'s fih!"
+            shop.delete_item(result[0])
+    elif (result[1] == 4):
+        river_uid = 346826648865210368
+        message=f"<@{river_uid}> {user.display_name} has ordered a toy!"
+    elif (result[1] == 5):
+        message="Use `/fish` to use the Golden Rod"
+    elif (result[1] == 6):
+        users = fishy.getAllUsers()
+        for user in users:
+            fishy.destroy_fish(user,100)
+        message="BOMB THEM!"
+        shop.delete_item(result[0])
+    elif (result[1] == 7):
+        river_uid = 346826648865210368
+        message=f"<@{river_uid}> Chili's awaits you..."
+    else:
+        message="You can't use that item!"
     await interaction.response.send_message(message)
 
 	
