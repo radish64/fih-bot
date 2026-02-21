@@ -23,29 +23,32 @@ bot_key = "YOUR BOT KEY"
 
 errors = fihfile("errors.fih").getCategory("Errors")
 
-
-@tree.command(name = 'fish', description = 'catch fishies!')
-async def fish_command(interaction):
+async def go_fish(interaction, modifier):
     user = interaction.user
-    #print(f"{user.id} {user.name}, {user.global_name}, {user.display_name}")
     lastfishedtime = fishy.check_timestamp(user)
     if(int(datetime.now().timestamp() - lastfishedtime > 3600)):
-        fih = fishy.catch_fish(user)
+        fih = fishy.catch_fish(user,modifier)
         caughtfishy = fih[0]
         caughtfishies = fih[1] 
         if caughtfishies == 100:
             caughtfishies = "💯";
         await interaction.response.send_message(f"caught a{str(caughtfishy)} worth {str(caughtfishies)} fih!")
         print(f"caught {str(caughtfishies)} for {user}")
+        return 1
     else:
         waittime = 3600 - (int(datetime.now().timestamp()) - lastfishedtime)
         await interaction.response.send_message(errors[random.randint(0,len(errors)-1)])
-        #await interaction.response.send_message("wait " + str(waittime // 3600) + " hours, " + str(waittime % 3600 // 60) + " minutes, " + str(waittime % 3600 % 60) + " seconds :3")
         print(int(datetime.now().timestamp()) - lastfishedtime)
+        return 0
+
+
+@tree.command(name = 'fish', description = 'catch fishies!')
+async def fish_command(interaction):
+    await go_fish(interaction,0)
 
 @tree.command(name = 'leaderboard', description = 'show fishy leaderboard')
 async def leaderboard_command(interaction):
-    table = fishy.print_db().getvalue()
+    table = fishy.print_db()
     await interaction.response.send_message(table)
 
 @tree.command(name = 'shop', description = 'show fishy shop')
@@ -72,6 +75,31 @@ async def buy_command(interaction, item: str):
     else:
         message = f"Enjoy your {purchase}!"
     await interaction.response.send_message(message)
+
+@tree.command(name = 'use', description = 'buy an item with fih points!')
+async def use_command(interaction, item: str, target: str):
+    user = interaction.user
+    result=shop.use_item(user,item)
+    print(result)
+    message=""
+    if (result[1] == -1):
+        message="Are you stupid? That's not an item"
+    if (result[1] == -2):
+        message="Are you stupid? You don't have that item"
+    if (result[1] == 1):
+        fished = await go_fish(interaction,50)
+        if (fished):
+            shop.delete_item(result[1])
+    if (result[1] == 2):
+        fished = await go_fish(interaction,100)
+        if (fished):
+            shop.delete_item(result[1])
+    if (result[1] == 3):
+            fishy.destroy_fish((re.split('<|@|>',target)[2]),100)
+            message=target
+            shop.delete_item(result[1])
+    await interaction.response.send_message(message)
+
 	
 @client.event
 async def on_ready():

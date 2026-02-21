@@ -30,7 +30,7 @@ with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=
                    
                     """)
 
-def catch_fish(user):
+def catch_fish(user, modifier):
     diceRoll = random.randint(0,1000)
     minFishies = 0
     maxFishies = 0
@@ -62,7 +62,9 @@ def catch_fish(user):
         caughtFishy = ultra[random.randint(0,len(ultra)-1)]
         minFishies = 1000 
         maxFishies = 1000
-    caughtFishies = random.randint(minFishies,maxFishies)
+    minFishies += modifier
+    maxFishies += modifier
+    caughtFishies = min(random.randint(minFishies,maxFishies), 1000)
     #print("Caught " + str(caughtFishies) + " fishies")
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
@@ -103,8 +105,20 @@ def check_timestamp(user):
 def print_db():
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
-            returnTable = io.StringIO('')
-            sql = "COPY(SELECT name, fishies FROM fishy ORDER BY fishies DESC) TO STDOUT;"
-            cur.copy_expert(sql,returnTable)
-            return(returnTable)
+            returnstring = ""
+            cur.execute('select name, fishies from fishy;')
+            shopitems=cur.fetchall()
+            for item in shopitems:
+                #returnstring += f"\n{item[0]}) {item[1]}: {item[2]} ({item[3]} fih)"
+                returnstring += f"\n- {item[0]}:    {item[1]} fih"
+            return returnstring
 
+def destroy_fish(uid,amount):
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select fishies from fishy where id like %s',(str(uid),))
+            currentFishies = cur.fetchone()[0]
+            print(currentFishies)
+            newFishies = currentFishies - amount
+            cur.execute('update fishy set fishies = %s where id like %s',(newFishies,str(uid)))
+            conn.commit()
