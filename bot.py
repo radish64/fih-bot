@@ -1,4 +1,4 @@
-#!/srv/fishy/bin/python3
+#!/usr/bin/env python3
 
 import discord
 from discord import app_commands
@@ -20,7 +20,7 @@ tree = app_commands.CommandTree(client)
 
 bot_key = "YOUR BOT KEY"
 
-errors = fihfile("errors.fih").data[0][1:]
+errors = fihfile("errors.fih").getCategory("Errors")
 
 
 @tree.command(name = 'fish', description = 'Catch fishies!')
@@ -55,4 +55,4 @@ async def on_ready():
 	await tree.sync()
 
 
-client.run(bot_key) #fih2
+client.run(bot_key)

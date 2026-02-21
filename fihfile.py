@@ -9,3 +9,7 @@ class fihfile:
             #print(line)
             self.data.append(re.split(':|,', line.rstrip()))
         #print(self.data)
+    def getCategory(self, category):
+        for f in self.data:
+            if (f[0] == category):
+                return f[1:]

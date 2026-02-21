@@ -1,4 +1,4 @@
-#!/srv/fishy/bin/python3
+#!/usr/bin/env python3
 import psycopg2 as psycopg
 import random
 import sys
@@ -11,36 +11,13 @@ psqluser = "YOUR POSTGRES USERNAME"
 psqlpass = "YOUR POSTGRES PASSWORD"
 
 fishies = fihfile("fishies.fih")
-trash = []
-common = []
-uncommon = []
-rare = []
-epic = []
-legendary = []
-ultra = []
-
-for f in fishies.data:
-    if f[0] == "Trash":
-        trash = (f[1:])
-    if f[0] == "Common":
-        common = (f[1:])
-    if f[0] == "Uncommon":
-        uncommon = (f[1:])
-    if f[0] == "Rare":
-        rare = (f[1:])
-    if f[0] == "Epic":
-        epic = (f[1:])
-    if f[0] == "Legendary":
-        legendary = (f[1:])
-    if f[0] == "Ultra":
-        ultra = (f[1:])
-
-#print(trash)
-#print(common)
-#print(uncommon)
-#print(rare)
-#print(legendary)
-#print(ultra)
+trash = fishies.getCategory("Trash")
+common = fishies.getCategory("Common")
+uncommon = fishies.getCategory("Uncommon")
+rate = fishies.getCategory("Rare")
+epic = fishies.getCategory("Epic")
+legendary = fishies.getCategory("Legendary")
+ultra = fishies.getCategory("Ultra")
 
 with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
     with conn.cursor() as cur:
