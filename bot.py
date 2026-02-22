@@ -78,6 +78,15 @@ async def buy_command(interaction, item: str):
         message = f"Enjoy your {purchase}!"
     await interaction.response.send_message(message)
 
+class items(Enum):
+    WORM=1
+    LURE=2
+    BARNACLE=3
+    TOY=4
+    GOLDEN=5
+    BOMB=6
+    CHILIS=7
+
 @tree.command(name = 'use', description = 'buy an item with fih points!')
 async def use_command(interaction, item: str, target: str=None):
     user = interaction.user
@@ -88,35 +97,35 @@ async def use_command(interaction, item: str, target: str=None):
         message="Are you stupid? That's not an item"
     elif (result == -2):
         message="Are you stupid? You don't have that item"
-    elif (result[1] == 1):
+    elif (result[1] == items.WORM.value):
         fished = await go_fish(interaction,50)
         if (fished):
             shop.delete_item(result[0])
         return 0
-    elif (result[1] == 2):
+    elif (result[1] == items.LURE.value):
         fished = await go_fish(interaction,100)
         if (fished):
             shop.delete_item(result[0])
         return 0
-    elif (result[1] == 3):
+    elif (result[1] == items.BARNACLE.value):
         if (not target):
             message = "Ping a user to attack!"
         else:
             fishy.destroy_fish((re.split('<|@|>',target)[2]),100)
             message=f"Barnacles destroyed 100 of {target}'s fih!"
             shop.delete_item(result[0])
-    elif (result[1] == 4):
+    elif (result[1] == items.TOY.value):
         river_uid = 346826648865210368
         message=f"<@{river_uid}> {user.display_name} has ordered a toy!"
-    elif (result[1] == 5):
+    elif (result[1] == items.GOLDEN.value):
         message="Use `/fish` to use the Golden Rod"
-    elif (result[1] == 6):
+    elif (result[1] == items.BOMB.value):
         users = fishy.getAllUsers()
         for user in users:
             fishy.destroy_fish(user,100)
         message="BOMB THEM!"
         shop.delete_item(result[0])
-    elif (result[1] == 7):
+    elif (result[1] == items.CHILIS.value):
         river_uid = 346826648865210368
         message=f"<@{river_uid}> Chili's awaits you..."
     else:
