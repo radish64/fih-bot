@@ -19,6 +19,10 @@ with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=
                    unique_id serial primary key,
                    user_id text,
                    item_id int);
+               create table if not exists queue(
+                   unique_id serial primary key,
+                   user_id text,
+                   item_id int);
 
                     """)
         conn.commit()
@@ -102,8 +106,22 @@ def delete_item(itemid):
             cur.execute('delete from inventory where unique_id = %s',(itemid,))
             conn.commit()
 
-def hasGoldenRod(user):
+def cast_item(userid,itemid):
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
-            cur.execute('select * from inventory where user_id like %s and item_id=5',(str(user.id),))
-            return (cur.fetchone())
+            cur.execute('insert into queue (user_id, item_id) values (%s, %s);',(userid,itemid))
+            print(f"added {itemid} to queue for {userid}")
+            conn.commit()
+            return True
+
+def popQueue(user):
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select * from queue where user_id like %s',(str(user.id),))
+            item = cur.fetchone()
+            if (not item):
+                return False
+            else:
+                cur.execute('delete from queue where unique_id = %s',(item[0],))
+                conn.commit()
+                return item
