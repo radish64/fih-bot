@@ -18,6 +18,7 @@ rare = fishies.getCategory("Rare")
 epic = fishies.getCategory("Epic")
 legendary = fishies.getCategory("Legendary")
 ultra = fishies.getCategory("Ultra")
+weed = fishies.getCategory("Weed")
 
 with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
     with conn.cursor() as cur:
@@ -38,26 +39,30 @@ def catch_fish(user):
         caughtFishy = trash[random.randint(0,len(trash)-1)]
         minFishies = 0
         maxFishies = 0
-    elif (diceRoll <= 490):
+    elif (diceRoll <= 480):
         caughtFishy = common[random.randint(0,len(common)-1)]
         minFishies = 1
         maxFishies = 10
-    elif (diceRoll <= 690):
+    elif (diceRoll <= 680):
         caughtFishy = uncommon[random.randint(0,len(uncommon)-1)]
         minFishies = 11 
         maxFishies = 30 
-    elif (diceRoll <= 840):
+    elif (diceRoll <= 830):
         caughtFishy = rare[random.randint(0,len(rare)-1)]
         minFishies = 31 
         maxFishies = 50
-    elif (diceRoll <= 940):
+    elif (diceRoll <= 930):
         caughtFishy = epic[random.randint(0,len(epic)-1)]
         minFishies = 51 
         maxFishies = 100 
-    elif (diceRoll < 990):
+    elif (diceRoll < 980):
         caughtFishy = legendary[random.randint(0,len(legendary)-1)]
         minFishies = 101
         maxFishies = 300
+    elif (diceRoll < 990):
+        caughtFishy = weed[random.randint(0,len(weed)-1)]
+        minFishies = 420
+        maxFishies = 420
     elif (diceRoll <= 1000):
         caughtFishy = ultra[random.randint(0,len(ultra)-1)]
         minFishies = 1000 
