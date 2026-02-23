@@ -5,3 +5,5 @@ include
 lib
 lib64
 pyvenv.cfg
+testcsv.py
+__pychache__
