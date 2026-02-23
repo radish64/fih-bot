@@ -33,26 +33,40 @@ class items(Enum):
     MASTER=6
     BOMB=7
     CHILIS=8
+    TRASH=9
+    NUKE=10
 
 async def go_fish(interaction, modifier):
     user = interaction.user
+    message = ""
+    image = None
     lastfishedtime = fishy.check_timestamp(user)
     if(int(datetime.now().timestamp() - lastfishedtime > 3600)):
         if (modifier == 0):
+            if(shop.check_timer(str(user.id),items.GOLDEN.value)):
+                modifier = 100
             queueItem = shop.popQueue(user)
             if (queueItem):
                 if queueItem[2] == (items.WORM.value):
-                    modifier = 50
+                    modifier += 50
                 elif queueItem[2] == (items.LURE.value):
-                    modifier = 100
+                    modifier += 100
                 elif queueItem[2] == (items.MASTER.value):
                     modifier = 1000
+                elif queueItem[2] == (items.TRASH.value):
+                    modifier = -1000
+                    message += "HA, you've been trashed! "
+                    image = open("images/danny.png", "br")
         fih = fishy.catch_fish(user,modifier)
         caughtfishy = fih[0]
         caughtfishies = fih[1] 
         if caughtfishies == 100:
             caughtfishies = "💯";
-        await interaction.response.send_message(f"Caught a{str(caughtfishy)} worth {str(caughtfishies)} fih!")
+        message += f"Caught a{str(caughtfishy)} worth {str(caughtfishies)} fih!"
+        if (not image):
+            await interaction.response.send_message(message)
+        else:
+            await interaction.response.send_message(message, file=discord.File(fp=image))
         print(f"Caught {str(caughtfishies)} for {user}")
         return 1
     else:
@@ -145,7 +159,9 @@ async def use_command(interaction, item: str, target: str=None):
         shop.delete_item(result[0])
 
     elif (result[1] == items.GOLDEN.value):
-        message="Use `/fish` to use the Golden Rod"
+        message="ROD ACTIVATED -- YOU HAVE 24 HOURS!"
+        shop.start_timer(str(user.id), result[1])
+        shop.delete_item(result[0])
 
     elif (result[1] == items.MASTER.value):
         if (not target):
@@ -169,8 +185,26 @@ async def use_command(interaction, item: str, target: str=None):
         river_uid = 346826648865210368
         message=f"<@{river_uid}> Chili's awaits you..."
 
+    elif (result[1] == items.TRASH.value):
+        if (not target):
+            fished = await go_fish(interaction,-1000)
+            if (fished):
+                shop.delete_item(result[0])
+            return 0
+        else:
+            shop.cast_item(target, result[1])
+            shop.delete_item(result[0])
+            message = "Your spell has been cast!"
+
+    elif (result[1] == items.NUKE.value):
+        fishy.nuke()
+        message=f"You have doomed us all 💀💀😢💀😢"
+        message += fishy.print_db()
+        shop.delete_item(result[0])
+
     else:
         message="You can't use that item!"
+
     await interaction.response.send_message(message)
 
 	

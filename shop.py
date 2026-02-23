@@ -23,6 +23,11 @@ with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=
                    unique_id serial primary key,
                    user_id text,
                    item_id int);
+               create table if not exists timer(
+                   unique_id serial primary key,
+                   user_id text,
+                   item_id int,
+                   time int);
 
                     """)
         conn.commit()
@@ -45,7 +50,7 @@ def print_shop():
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
             returnstring = ""
-            cur.execute('select * from shop;')
+            cur.execute('select * from shop order by price;')
             shopitems=cur.fetchall()
             for item in shopitems:
                 #returnstring += f"\n{item[0]}) {item[1]}: {item[2]} ({item[3]} fih)"
@@ -58,8 +63,9 @@ def print_inventory(user):
             returnstring = ""
             cur.execute('''select shop.name from inventory
                             join shop on inventory.item_id = shop.id
-                            join fishy on inventory.user_id = fishy.id;
-                        ''')
+                            join fishy on inventory.user_id = fishy.id
+                            where inventory.user_id = %s
+                        ''', (str(user.id),))
             shopitems=cur.fetchall()
             if (not shopitems):
                 return "You have no items!"
@@ -113,6 +119,25 @@ def cast_item(userid,itemid):
             print(f"added {itemid} to queue for {userid}")
             conn.commit()
             return True
+
+def start_timer(userid,itemid):
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('insert into timer (user_id, item_id, time) values (%s, %s, %s);',(userid,itemid,int(datetime.now().timestamp())))
+            conn.commit()
+
+def check_timer(userid,itemid):
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select item_id, time from timer where user_id like %s and item_id = %s',(userid,itemid,))
+            timer = cur.fetchone()
+            if(timer[0] == 5):
+                if(int(datetime.now().timestamp() - timer[1] > 86400)):
+                    cur.execute('delete from timer where user_id = %s and item_id = %s',(userid,itemid,))
+                    return False
+                else:
+                    return True
+            conn.commit()
 
 def popQueue(user):
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:

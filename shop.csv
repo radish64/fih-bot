@@ -1,9 +1,11 @@
 id,name,description,price
 1,"Worm","Slightly increase your luck for one cast",25
 2,"Fih Lure","Greatly increase your luck for one cast",50
-3,"Barnacle Rod","Remove 100 fih from player",200
+3,"Barnacle Staff","Remove 100 fih from player",200
 4,"Fih Toy","It's a secret!",500
-5,"Golden Rod","Increase your luck for 6 hours",1000
+5,"Golden Rod","Increase your luck for 24 hours",1000
 6,"Master Bait","Guarantees an ultra",1001
 7,"Bomb Them","Remove 100 fih from all players",1500
 8,"Chili's","Go to Chili's with river",999999
+9,"Trash Man","Gauruntee next catch is trash",100
+10,"The Great Reset","Guess what",1000000

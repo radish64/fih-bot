@@ -127,6 +127,13 @@ def destroy_fish(uid,amount):
             cur.execute('update fishy set fishies = %s where id like %s',(newFishies,str(uid)))
             conn.commit()
 
+def nuke():
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('update fishy set fishies = 0;')
+            conn.commit()
+
+
 def getAllUsers():
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
