@@ -131,7 +131,9 @@ def check_timer(userid,itemid):
         with conn.cursor() as cur:
             cur.execute('select item_id, time from timer where user_id like %s and item_id = %s',(userid,itemid,))
             timer = cur.fetchone()
-            if(timer[0] == 5):
+            if not(timer):
+                return False
+            elif(timer[0] == 5):
                 if(int(datetime.now().timestamp() - timer[1] > 86400)):
                     cur.execute('delete from timer where user_id = %s and item_id = %s',(userid,itemid,))
                     return False

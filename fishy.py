@@ -110,7 +110,7 @@ def print_db():
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
             returnstring = ""
-            cur.execute('select name, fishies from fishy;')
+            cur.execute('select name, fishies from fishy order by fishies desc;')
             shopitems=cur.fetchall()
             count = 1
             for item in shopitems:
