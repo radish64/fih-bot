@@ -112,9 +112,11 @@ def print_db():
             returnstring = ""
             cur.execute('select name, fishies from fishy;')
             shopitems=cur.fetchall()
+            count = 1
             for item in shopitems:
                 #returnstring += f"\n{item[0]}) {item[1]}: {item[2]} ({item[3]} fih)"
-                returnstring += f"\n- {item[0]}:    {item[1]} fih"
+                returnstring += f"\n{count}) {item[0]}:    {item[1]} fih"
+                count += 1
             return returnstring
 
 def destroy_fish(uid,amount):

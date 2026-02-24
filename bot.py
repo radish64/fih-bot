@@ -96,9 +96,13 @@ async def items_command(interaction):
     await interaction.response.send_message(table)
 
 @tree.command(name = 'buy', description = 'buy an item with fih points!')
-async def buy_command(interaction, item: str):
+async def buy_command(interaction, item: str, target: str=None):
+    if (not target):
+        target = str(user.id)
+    else:
+        target = re.split('<|@|>',target)[2]
     user = interaction.user
-    purchase=shop.buy_item(user,item)
+    purchase=shop.buy_item(target,item)
     message=""
     if (purchase == 1):
         message = "Are you stupid? That's not an item"
@@ -184,6 +188,7 @@ async def use_command(interaction, item: str, target: str=None):
     elif (result[1] == items.CHILIS.value):
         river_uid = 346826648865210368
         message=f"<@{river_uid}> Chili's awaits you..."
+        shop.delete_item(result[0])
 
     elif (result[1] == items.TRASH.value):
         if (not target):

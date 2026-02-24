@@ -74,21 +74,21 @@ def print_inventory(user):
                 returnstring += f"\n- {item[0]}"
             return returnstring
 
-def buy_item(user,itemname):
+def buy_item(userid,itemname):
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
         with conn.cursor() as cur:
             cur.execute('select * from shop where lower(name) like lower(%s)',(itemname,))
             item = cur.fetchone()
             if (not item):
                 return 1
-            cur.execute('select fishies from fishy where id like %s', (str(user.id),))
+            cur.execute('select fishies from fishy where id like %s', (userid,))
             wallet = cur.fetchone()
-            if (not user):
+            if (not wallet):
                 return 2
             if (wallet[0] < item[3]):
                 return 3
-            cur.execute('insert into inventory (user_id, item_id) values (%s, %s);',(str(user.id),item[0]))
-            cur.execute('update fishy set fishies = %s where id like %s',(wallet[0]-item[3],str(user.id)))
+            cur.execute('insert into inventory (user_id, item_id) values (%s, %s);',(userid,item[0]))
+            cur.execute('update fishy set fishies = %s where id like %s',(wallet[0]-item[3],userid))
             conn.commit()
             return item[1]
             
