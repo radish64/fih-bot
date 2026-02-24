@@ -12,6 +12,10 @@ import re
 import random
 from enum import Enum
 from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -20,7 +24,7 @@ client = discord.Client(intents=intents)
 
 tree = app_commands.CommandTree(client)
 
-bot_key = "YOUR BOT KEY"
+bot_key = os.getenv("DISCORD_TOKEN")
 
 errors = fihfile("errors.fih").getCategory("Errors")
 
