@@ -97,11 +97,11 @@ async def items_command(interaction):
 
 @tree.command(name = 'buy', description = 'buy an item with fih points!')
 async def buy_command(interaction, item: str, target: str=None):
+    user = interaction.user
     if (not target):
         target = str(user.id)
     else:
         target = re.split('<|@|>',target)[2]
-    user = interaction.user
     purchase=shop.buy_item(target,item)
     message=""
     if (purchase == 1):
