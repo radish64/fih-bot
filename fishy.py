@@ -5,10 +5,13 @@ import sys
 import io
 from datetime import datetime
 from fihfile import fihfile
+from dotenv import load_dotenv
+import os
 
-psqlname = "YOUR POSTGRES DATABASE"
-psqluser = "YOUR POSTGRES USERNAME"
-psqlpass = "YOUR POSTGRES PASSWORD"
+load_dotenv()
+psqlname = os.getenv("POSTGRES_DB")
+psqluser = os.getenv("POSTGRES_USER")
+psqlpass = os.getenv("POSTGRES_PASSWORD")
 
 fishies = fihfile("fishies.fih")
 trash = fishies.getCategory("Trash")
