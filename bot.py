@@ -117,8 +117,9 @@ async def buy_command(interaction, item: str, target: str=None):
 @tree.command(name = 'use', description = 'buy an item with fih points!')
 async def use_command(interaction, item: str, target: str=None):
     user = interaction.user
+    targetid=""
     if (target):
-        target = re.split('<|@|>',target)[2]
+        targetid = re.split('<|@|>',target)[2]
         print(target)
     result=shop.use_item(user,item)
     print(result)
@@ -134,7 +135,7 @@ async def use_command(interaction, item: str, target: str=None):
                 shop.delete_item(result[0])
             return 0
         else:
-            shop.cast_item(target, result[1])
+            shop.cast_item(targetid, result[1])
             shop.delete_item(result[0])
             message = "Your spell has been cast!"
 
@@ -145,7 +146,7 @@ async def use_command(interaction, item: str, target: str=None):
                 shop.delete_item(result[0])
             return 0
         else:
-            shop.cast_item(target, result[1])
+            shop.cast_item(targetid, result[1])
             shop.delete_item(result[0])
             message = "Your spell has been cast!"
             
@@ -153,7 +154,7 @@ async def use_command(interaction, item: str, target: str=None):
         if (not target):
             message = "Ping a user to attack!"
         else:
-            fishy.destroy_fish(target,100)
+            fishy.destroy_fish(targetid,100)
             message=f"Barnacles destroyed 100 of {target}'s fih!"
             shop.delete_item(result[0])
 
@@ -174,7 +175,7 @@ async def use_command(interaction, item: str, target: str=None):
                 shop.delete_item(result[0])
             return 0
         else:
-            shop.cast_item(target, result[1])
+            shop.cast_item(targetid, result[1])
             shop.delete_item(result[0])
             message = "Your spell has been cast!"
 
