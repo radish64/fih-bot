@@ -18,7 +18,7 @@ rare = fishies.getCategory("Rare")
 epic = fishies.getCategory("Epic")
 legendary = fishies.getCategory("Legendary")
 ultra = fishies.getCategory("Ultra")
-weed = fishies.getCategory("Weed")
+special = fishies.getCategory("Special")
 
 with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
     with conn.cursor() as cur:
@@ -61,9 +61,20 @@ def catch_fish(user, modifier):
         minFishies = 101
         maxFishies = 300
     elif (diceRoll < 990):
-        caughtFishy = weed[random.randint(0,len(weed)-1)]
-        minFishies = 420
-        maxFishies = 420
+        caughtFishy = special[random.randint(0,len(special)-1)]
+        match caughtFishy:
+            case " Weed Carp":
+                minFishies = 420
+                maxFishies = 420
+            case " Satan Fih":
+                minFishies = 666
+                maxFishies = 666
+            case " Pro Shop Bass":
+                minFishies = 670
+                maxFishies = 670
+            case " Angel Fih":
+                minFishies = 999
+                maxFishies = 999
     elif (diceRoll <= 1000):
         caughtFishy = ultra[random.randint(0,len(ultra)-1)]
         minFishies = 1000 
