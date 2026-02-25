@@ -202,7 +202,7 @@ async def use_command(interaction, item: str, target: str=None):
                 shop.delete_item(result[0])
             return 0
         else:
-            shop.cast_item(target, result[1])
+            shop.cast_item(targetid, result[1])
             shop.delete_item(result[0])
             message = "Your spell has been cast!"
 
