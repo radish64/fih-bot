@@ -57,6 +57,8 @@ async def go_fish(interaction, modifier):
                     modifier += 100
                 elif queueItem[2] == (items.MASTER.value):
                     modifier = 1000
+                    message += "You're a master baiter! "
+                    image = open("images/goldfih.png", "br")
                 elif queueItem[2] == (items.TRASH.value):
                     modifier = -1000
                     message += "HA, you've been trashed! "
@@ -75,7 +77,9 @@ async def go_fish(interaction, modifier):
         return 1
     else:
         waittime = 3600 - (int(datetime.now().timestamp()) - lastfishedtime)
-        await interaction.response.send_message(errors[random.randint(0,len(errors)-1)])
+        message = errors[random.randint(0,len(errors)-1)]
+        message += f" Wait {str(waittime % 3600 // 60)} minutes, {str(waittime % 3600 % 60)} seconds."
+        await interaction.response.send_message(message)
         print(int(datetime.now().timestamp()) - lastfishedtime)
         return 0
 
@@ -100,13 +104,9 @@ async def items_command(interaction):
     await interaction.response.send_message(table)
 
 @tree.command(name = 'buy', description = 'buy an item with fih points!')
-async def buy_command(interaction, item: str, target: str=None):
+async def buy_command(interaction, item: str):
     user = interaction.user
-    if (not target):
-        target = str(user.id)
-    else:
-        target = re.split('<|@|>',target)[2]
-    purchase=shop.buy_item(target,item)
+    purchase=shop.buy_item(str(user.id),item)
     message=""
     if (purchase == 1):
         message = "Are you stupid? That's not an item"
