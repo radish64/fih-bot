@@ -78,6 +78,9 @@ def catch_fish(user, modifier):
             case " Angel Fih":
                 minFishies = 999
                 maxFishies = 999
+            case " Fetty Fih":
+                minFishies = 1738
+                maxFishies = 1738
     elif (diceRoll <= 1000):
         caughtFishy = ultra[random.randint(0,len(ultra)-1)]
         minFishies = 1000 
