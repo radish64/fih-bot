@@ -2,10 +2,13 @@
 import psycopg2 as psycopg
 import csv
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 
-psqlname = "YOUR POSTGRES DATABASE"
-psqluser = "YOUR POSTGRES USERNAME"
-psqlpass = "YOUR POSTGRES PASSWORD"
+load_dotenv()
+psqlname = os.getenv("POSTGRES_DB")
+psqluser = os.getenv("POSTGRES_USER")
+psqlpass = os.getenv("POSTGRES_PASSWORD")
 
 with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
     with conn.cursor() as cur:
