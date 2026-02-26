@@ -39,6 +39,7 @@ class items(Enum):
     CHILIS=8
     TRASH=9
     NUKE=10
+    SHELL=11
 
 async def go_fish(interaction, modifier):
     user = interaction.user
@@ -208,9 +209,18 @@ async def use_command(interaction, item: str, target: str=None):
 
     elif (result[1] == items.NUKE.value):
         fishy.nuke()
-        message=f"You have doomed us all 💀💀😢💀😢"
+        message=f"You have doomed us all 💀💀😢💀😢\n"
         message += fishy.print_db()
         shop.delete_item(result[0])
+
+    elif (result[1] == items.SHELL.value):
+        fishy.blueshell()
+        message=f"You fool. Do you see what you’ve done. You have doomed everyone here. And there is no fixing it\n"
+        message += fishy.print_db()
+        image = open("images/hell.jpg", "br")
+        shop.delete_item(result[0])
+        await interaction.response.send_message(message, file=discord.File(fp=image))
+        return 0
 
     else:
         message="You can't use that item!"

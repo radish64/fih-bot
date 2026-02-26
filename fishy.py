@@ -152,6 +152,21 @@ def nuke():
             cur.execute('update fishy set fishies = 0;')
             conn.commit()
 
+def blueshell():
+    with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
+        with conn.cursor() as cur:
+            cur.execute('select id, fishies from fishy order by fishies desc;')
+            result = cur.fetchone()
+            if (result[0] == '695456197364416542'):
+                result = cur.fetchone()
+            cur.execute('update fishy set fishies = 0 where id like %s;',(result[0],))
+            cur.execute("select fishies from fishy where id like '695456197364416542';")
+            romanfishies = cur.fetchone()[0]
+            print(romanfishies)
+            romanfishies += result[1]
+            cur.execute("update fishy set fishies = %s where id like '695456197364416542';",(romanfishies,))
+            conn.commit()
+
 
 def getAllUsers():
     with psycopg.connect(dbname=psqlname, user=psqluser, host='localhost', password=psqlpass) as conn:
